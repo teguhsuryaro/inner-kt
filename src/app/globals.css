@@ -1,0 +1,52 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --font-inter: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    --font-jetbrains-mono: 'JetBrains Mono', 'Fira Code', 'Courier New', monospace;
+  }
+
+  body {
+    background-color: #f8fafc;
+    color: #0f172a;
+    font-family: var(--font-inter);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+}
+
+/* Ensure all financial numbers and IDs align vertically with monospace tabular numbers */
+.tabular-nums {
+  font-variant-numeric: tabular-nums;
+}
+
+/* High-Density Operational Table Styles */
+.finance-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.finance-table th {
+  background-color: #f8fafc;
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: #475569;
+  border-bottom: 1px solid #e2e8f0;
+  padding: 0.625rem 0.875rem;
+  text-align: left;
+}
+
+.finance-table td {
+  font-size: 0.875rem;
+  color: #0f172a;
+  border-bottom: 1px solid #f1f5f9;
+  padding: 0.625rem 0.875rem;
+}
+
+.finance-table tr:hover td {
+  background-color: #f8fafc;
+}
