@@ -503,8 +503,25 @@ export default function CrmPage() {
             <tbody>
               {filteredLeads.length === 0 ? (
                 <tr>
-                  <td colSpan={9} className="text-center py-10 text-slate-400 text-xs font-sans">
-                    Tidak ada data prospek yang cocok dengan kriteria filter.
+                  <td colSpan={9} className="text-center py-12 text-slate-500 font-sans">
+                    <div className="flex flex-col items-center justify-center max-w-sm mx-auto">
+                      <div className="w-12 h-12 rounded-full bg-slate-100 flex items-center justify-center text-slate-400 mb-3">
+                        <Users2 className="w-6 h-6 stroke-[1.5]" />
+                      </div>
+                      <h4 className="font-semibold text-slate-800 text-sm mb-1">
+                        Pipeline CRM Masih Kosong
+                      </h4>
+                      <p className="text-xs text-slate-500 mb-4 leading-relaxed">
+                        Belum ada prospek pelanggan atau event yang dicatat. Klik tombol di bawah untuk mulai mendata calon penyewa dari event kampus, sekolah, atau EO.
+                      </p>
+                      <button
+                        onClick={openAddModal}
+                        className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded bg-slate-900 hover:bg-slate-800 text-white text-xs font-medium shadow-xs"
+                      >
+                        <Plus className="w-3.5 h-3.5" />
+                        <span>Tambah Prospek Perdana</span>
+                      </button>
+                    </div>
                   </td>
                 </tr>
               ) : (
@@ -741,7 +758,7 @@ export default function CrmPage() {
       {/* Modal Tambah Prospek Baru */}
       {showAddModal && (
         <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-xs flex items-center justify-center z-50 p-4">
-          <div className="bg-white rounded-lg border border-slate-200 shadow-xl max-w-lg w-full p-6 max-h-[90vh] overflow-y-auto">
+          <div className="bg-white rounded-lg border border-slate-200 shadow-xl w-[calc(100vw-2rem)] sm:max-w-lg p-5 sm:p-6 max-h-[90vh] overflow-y-auto">
             <div className="flex items-center justify-between pb-3 border-b border-slate-200 mb-4">
               <div>
                 <h3 className="font-bold text-sm text-slate-900 font-sans">
@@ -1041,7 +1058,7 @@ export default function CrmPage() {
       {/* Modal Edit Prospek */}
       {editingLead && (
         <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-xs flex items-center justify-center z-50 p-4">
-          <div className="bg-white rounded-lg border border-slate-200 shadow-xl max-w-lg w-full p-6 max-h-[90vh] overflow-y-auto">
+          <div className="bg-white rounded-lg border border-slate-200 shadow-xl w-[calc(100vw-2rem)] sm:max-w-lg p-5 sm:p-6 max-h-[90vh] overflow-y-auto">
             <div className="flex items-center justify-between pb-3 border-b border-slate-200 mb-4">
               <div>
                 <h3 className="font-bold text-sm text-slate-900 font-sans">
@@ -1338,7 +1355,7 @@ export default function CrmPage() {
       {/* Modal Konfirmasi Hapus Prospek */}
       {deletingLead && (
         <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-xs flex items-center justify-center z-50 p-4">
-          <div className="bg-white rounded-lg border border-slate-200 shadow-xl max-w-md w-full p-6">
+          <div className="bg-white rounded-lg border border-slate-200 shadow-xl w-[calc(100vw-2rem)] sm:max-w-md p-5 sm:p-6 max-h-[90vh] overflow-y-auto">
             <div className="flex items-start gap-3">
               <div className="p-2 rounded-full bg-rose-50 text-rose-600 border border-rose-200 shrink-0">
                 <AlertCircle className="w-5 h-5" />

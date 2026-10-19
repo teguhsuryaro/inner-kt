@@ -80,7 +80,7 @@ export const dbService = {
     }
     try {
       const { data, error } = await supabase.from('assets').select('*').order('created_at', { ascending: false });
-      if (error || !data || data.length === 0) return innerKtStore.getAssets();
+      if (error || !data) return innerKtStore.getAssets();
       return data.map((row) => ({
         id: row.id,
         name: row.name,
@@ -197,7 +197,7 @@ export const dbService = {
     }
     try {
       const { data, error } = await supabase.from('crm_leads').select('*').order('created_at', { ascending: false });
-      if (error || !data || data.length === 0) return innerKtStore.getCrmLeads();
+      if (error || !data) return innerKtStore.getCrmLeads();
       return data.map((row) => ({
         id: row.id,
         organizationName: row.organization_name,
@@ -325,7 +325,7 @@ export const dbService = {
     }
     try {
       const { data, error } = await supabase.from('audit_logs').select('*').order('created_at', { ascending: false }).limit(200);
-      if (error || !data || data.length === 0) return innerKtStore.getAuditLogs();
+      if (error || !data) return innerKtStore.getAuditLogs();
       return data.map((row) => ({
         id: row.id,
         adminEmail: row.admin_email,

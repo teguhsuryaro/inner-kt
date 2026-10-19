@@ -41,16 +41,16 @@ import {
 import { validateOrderInput, validateAssetInput, validateExpenseInput } from './validations';
 
 const STORAGE_KEYS = {
-  OWNERS: 'inner_kt_v2_owners',
-  ADMINS: 'inner_kt_v2_admins',
-  ASSETS: 'inner_kt_v2_assets',
-  ORDERS: 'inner_kt_v2_orders',
-  ORDER_USAGES: 'inner_kt_v2_order_usages',
-  ORDER_ALLOCS: 'inner_kt_v2_order_allocs',
-  EXPENSES: 'inner_kt_v2_expenses',
-  EXPENSE_ALLOCS: 'inner_kt_v2_expense_allocs',
-  CRM_LEADS: 'inner_kt_v2_crm_leads',
-  AUDIT_LOGS: 'inner_kt_v2_audit_logs',
+  OWNERS: 'inner_kt_prod_owners',
+  ADMINS: 'inner_kt_prod_admins',
+  ASSETS: 'inner_kt_prod_assets',
+  ORDERS: 'inner_kt_prod_orders',
+  ORDER_USAGES: 'inner_kt_prod_order_usages',
+  ORDER_ALLOCS: 'inner_kt_prod_order_allocs',
+  EXPENSES: 'inner_kt_prod_expenses',
+  EXPENSE_ALLOCS: 'inner_kt_prod_expense_allocs',
+  CRM_LEADS: 'inner_kt_prod_crm_leads',
+  AUDIT_LOGS: 'inner_kt_prod_audit_logs',
 };
 
 // Simple event bus for notifying components of data mutations across the app

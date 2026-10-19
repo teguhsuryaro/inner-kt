@@ -31,10 +31,89 @@ export function getCurrentSession(): AuthSession | null {
   }
 }
 
+import { supabase, isSupabaseConfigured } from './supabase';
+
 /**
- * Authenticates with email and password against the 3 pre-seeded admin accounts.
+ * Authenticates with email and password against Supabase admin_users (or local seed fallback).
  */
-export function login(email: string, passwordPlain: string): { success: boolean; session?: AuthSession; error?: string } {
+export async function loginAsync(
+  email: string,
+  passwordPlain: string
+): Promise<{ success: boolean; session?: AuthSession; error?: string }> {
+  const cleanEmail = email.trim().toLowerCase();
+  const cleanPass = passwordPlain.trim();
+
+  // 1. Direct Supabase authentication against admin_users table
+  if (isSupabaseConfigured && supabase) {
+    try {
+      const { data, error } = await supabase
+        .from('admin_users')
+        .select('*')
+        .eq('email', cleanEmail)
+        .eq('password_plain', cleanPass)
+        .single();
+
+      if (!error && data) {
+        let linkedOwner = INITIAL_OWNERS.find((o) => o.id === data.owner_id);
+        if (!linkedOwner) {
+          const { data: ownerData } = await supabase
+            .from('owners')
+            .select('*')
+            .eq('id', data.owner_id)
+            .single();
+
+          if (ownerData) {
+            linkedOwner = {
+              id: ownerData.id,
+              code: ownerData.code,
+              name: ownerData.name,
+              colorBadge: ownerData.color_badge,
+              isActive: ownerData.is_active,
+              joinedAt: ownerData.joined_at,
+              notes: ownerData.notes,
+            };
+          }
+        }
+
+        const session: AuthSession = {
+          admin: {
+            id: data.id,
+            username: data.username,
+            email: data.email,
+            passwordPlain: data.password_plain,
+            displayName: data.display_name,
+            ownerId: data.owner_id,
+            role: data.role,
+            createdAt: data.created_at,
+          },
+          owner: linkedOwner,
+          token: `session_${data.username}_${Date.now()}`,
+        };
+
+        if (typeof window !== 'undefined') {
+          localStorage.setItem(SESSION_STORAGE_KEY, JSON.stringify(session));
+          document.cookie = `inner_kt_logged_in=true; path=/; max-age=86400; SameSite=Lax`;
+          document.cookie = `inner_kt_admin=${data.username}; path=/; max-age=86400; SameSite=Lax`;
+        }
+
+        return { success: true, session };
+      }
+    } catch (e) {
+      console.warn('Supabase auth fallback:', e);
+    }
+  }
+
+  // 2. Local fallback
+  return login(email, passwordPlain);
+}
+
+/**
+ * Synchronous local authentication fallback against INITIAL_ADMINS.
+ */
+export function login(
+  email: string,
+  passwordPlain: string
+): { success: boolean; session?: AuthSession; error?: string } {
   const cleanEmail = email.trim().toLowerCase();
   const cleanPass = passwordPlain.trim();
 
@@ -45,7 +124,7 @@ export function login(email: string, passwordPlain: string): { success: boolean;
   if (!foundAdmin) {
     return {
       success: false,
-      error: 'Email atau password salah. Pastikan menggunakan akun admin Kanal Tiga yang valid.',
+      error: 'Email atau password yang Anda masukkan tidak sesuai.',
     };
   }
 
@@ -59,7 +138,6 @@ export function login(email: string, passwordPlain: string): { success: boolean;
 
   if (typeof window !== 'undefined') {
     localStorage.setItem(SESSION_STORAGE_KEY, JSON.stringify(session));
-    // Also set a document cookie so client or edge middleware knows session state
     document.cookie = `inner_kt_logged_in=true; path=/; max-age=86400; SameSite=Lax`;
     document.cookie = `inner_kt_admin=${foundAdmin.username}; path=/; max-age=86400; SameSite=Lax`;
   }

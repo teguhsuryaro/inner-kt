@@ -68,7 +68,7 @@ export default function DashboardPage() {
         </div>
 
         {/* Filter Controls & Actions */}
-        <div className="flex items-center gap-2">
+        <div className="flex flex-wrap items-center gap-2">
           <div className="inline-flex rounded border border-slate-200 bg-white p-0.5 text-xs font-mono">
             <button
               onClick={() => setPeriod('ALL')}

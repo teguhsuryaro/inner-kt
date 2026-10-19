@@ -17,7 +17,7 @@ export default function ExpensesPage() {
   const [category, setCategory] = useState<ExpenseCategory>('STIKER_BRANDING');
   const [amount, setAmount] = useState<number>(50000);
   const [allocationType, setAllocationType] = useState<ExpenseAllocationType>('SHARED');
-  const [paidByOwnerId, setPaidByOwnerId] = useState('owner-1');
+  const [paidByOwnerId, setPaidByOwnerId] = useState('11111111-1111-1111-1111-111111111111');
   const [expenseDate, setExpenseDate] = useState(new Date().toISOString().split('T')[0]);
   const [description, setDescription] = useState('');
   const [receiptRef, setReceiptRef] = useState('');
@@ -216,8 +216,25 @@ export default function ExpensesPage() {
             <tbody>
               {filteredExpenses.length === 0 ? (
                 <tr>
-                  <td colSpan={8} className="text-center py-8 text-slate-400 text-xs">
-                    Tidak ada pengeluaran pada filter ini.
+                  <td colSpan={8} className="text-center py-12 text-slate-500">
+                    <div className="flex flex-col items-center justify-center max-w-sm mx-auto">
+                      <div className="w-12 h-12 rounded-full bg-slate-100 flex items-center justify-center text-slate-400 mb-3">
+                        <Receipt className="w-6 h-6 stroke-[1.5]" />
+                      </div>
+                      <h4 className="font-semibold text-slate-800 text-sm mb-1">
+                        Belum Ada Pengeluaran Bisnis
+                      </h4>
+                      <p className="text-xs text-slate-500 mb-4 leading-relaxed">
+                        Belum ada biaya operasional yang dicatat. Klik tombol di bawah untuk mencatat pengeluaran bersama atau perorangan.
+                      </p>
+                      <button
+                        onClick={() => setShowAddModal(true)}
+                        className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded bg-slate-900 hover:bg-slate-800 text-white text-xs font-medium shadow-xs"
+                      >
+                        <Plus className="w-3.5 h-3.5" />
+                        <span>Catat Pengeluaran Baru</span>
+                      </button>
+                    </div>
                   </td>
                 </tr>
               ) : (
@@ -314,7 +331,7 @@ export default function ExpensesPage() {
       {/* Modal Catat Pengeluaran Baru */}
       {showAddModal && (
         <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-xs flex items-center justify-center z-50 p-4">
-          <div className="bg-white rounded-lg border border-slate-200 shadow-xl max-w-lg w-full p-6 max-h-[90vh] overflow-y-auto">
+          <div className="bg-white rounded-lg border border-slate-200 shadow-xl w-[calc(100vw-2rem)] sm:max-w-lg p-5 sm:p-6 max-h-[90vh] overflow-y-auto">
             <div className="flex items-center justify-between pb-3 border-b border-slate-200 mb-4">
               <h3 className="font-bold text-sm text-slate-900 font-sans">
                 Catat Pengeluaran Operasional Baru

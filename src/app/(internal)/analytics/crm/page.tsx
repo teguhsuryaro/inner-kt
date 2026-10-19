@@ -213,13 +213,13 @@ export default function AnalyticsCrmPage() {
         </div>
 
         {/* Dual Export Buttons */}
-        <div className="flex items-center gap-2 self-start sm:self-auto">
+        <div className="flex flex-wrap items-center gap-2 w-full sm:w-auto">
           {/* 1. CSV for AI */}
           <button
             onClick={handleExportCsv}
             disabled={exportingType !== null}
             title="Download CSV terdenormalisasi yang ramah dipahami oleh AI/LLM (ChatGPT, Gemini, Claude)"
-            className="inline-flex items-center gap-1.5 px-3 py-2 rounded bg-white hover:bg-slate-50 border border-slate-300 text-slate-700 hover:text-slate-900 text-xs font-medium transition shadow-2xs"
+            className="inline-flex items-center justify-center flex-1 sm:flex-initial gap-1.5 px-3 py-2 rounded bg-white hover:bg-slate-50 border border-slate-300 text-slate-700 hover:text-slate-900 text-xs font-medium transition shadow-2xs"
           >
             <Bot className="w-3.5 h-3.5 text-blue-600" />
             <span>Download CSV (Untuk AI)</span>
@@ -230,13 +230,22 @@ export default function AnalyticsCrmPage() {
             onClick={handleExportExcel}
             disabled={exportingType !== null}
             title="Download Spreadsheet Excel (.xlsx) multi-sheet: rekap pipeline, database prospek, dan evaluasi Deal vs Batal"
-            className="inline-flex items-center gap-1.5 px-3 py-2 rounded bg-emerald-700 hover:bg-emerald-800 text-white text-xs font-medium transition shadow-xs"
+            className="inline-flex items-center justify-center flex-1 sm:flex-initial gap-1.5 px-3 py-2 rounded bg-emerald-700 hover:bg-emerald-800 text-white text-xs font-medium transition shadow-xs"
           >
             <Download className="w-3.5 h-3.5" />
             <span>Download Excel (.xlsx)</span>
           </button>
         </div>
       </div>
+
+      {leads.length === 0 && (
+        <div className="p-4 bg-slate-50 border border-slate-200 rounded-lg text-xs text-slate-600 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+          <div className="flex items-center gap-2.5">
+            <Sparkles className="w-4 h-4 text-blue-600 shrink-0" />
+            <span>Belum ada prospek tercatat di pipeline CRM. Visualisasi grafik akan terisi otomatis setelah Anda menambahkan calon pelanggan atau event.</span>
+          </div>
+        </div>
+      )}
 
       {/* Top Quick Metrics Summary Strip */}
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">

@@ -85,9 +85,11 @@ export default function AnalyticsFinancePage() {
     // Sort chronologically and format
     const sorted = Object.values(monthMap).sort((a, b) => a.month.localeCompare(b.month));
     if (sorted.length === 0) {
+      const monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun', 'Jul', 'Agu', 'Sep', 'Okt', 'Nov', 'Des'];
+      const now = new Date();
+      const currentLabel = `${monthNames[now.getMonth()]} ${now.getFullYear()}`;
       return [
-        { month: 'Feb 2026', netRevenue: 280000, expenses: 85000, netCashflow: 195000 },
-        { month: 'Mar 2026', netRevenue: 450000, expenses: 120000, netCashflow: 330000 },
+        { month: currentLabel, netRevenue: 0, expenses: 0, netCashflow: 0 },
       ];
     }
 
@@ -117,50 +119,32 @@ export default function AnalyticsFinancePage() {
 
   // 3. Data Grafik 3: Proporsi Kepemilikan Unit & Utilisasi Sewa
   const { ownershipData, utilizationData } = useMemo(() => {
-    const OWNER_COLORS: Record<string, string> = {
-      'owner-1': '#3b82f6', // Biru Surya
-      'owner-2': '#10b981', // Hijau Pemilik B
-      'owner-3': '#8b5cf6', // Ungu Pemilik C
-    };
+    const OWNER_COLORS = ['#3b82f6', '#10b981', '#f59e0b'];
 
-    // Ownership count per owner
-    const ownershipCounts: Record<string, number> = {
-      'owner-1': 0,
-      'owner-2': 0,
-      'owner-3': 0,
-    };
-    assets.forEach((a) => {
-      if (ownershipCounts[a.ownerId] !== undefined) {
-        ownershipCounts[a.ownerId] += a.quantity;
-      }
+    const oData = owners.map((owner, idx) => {
+      const units = assets
+        .filter((a) => a.ownerId === owner.id)
+        .reduce((sum, a) => sum + (a.quantity || 0), 0);
+      return {
+        name: owner.name,
+        value: units,
+        color: OWNER_COLORS[idx % OWNER_COLORS.length],
+      };
     });
 
-    const oData = [
-      { name: 'Surya (Pemilik 1)', value: ownershipCounts['owner-1'] || 1, color: OWNER_COLORS['owner-1'] },
-      { name: 'Pemilik B (Pemilik 2)', value: ownershipCounts['owner-2'] || 1, color: OWNER_COLORS['owner-2'] },
-      { name: 'Pemilik C (Pemilik 3)', value: ownershipCounts['owner-3'] || 1, color: OWNER_COLORS['owner-3'] },
-    ];
-
-    // Utilization units count per owner from order usages
-    const usageCounts: Record<string, number> = {
-      'owner-1': 0,
-      'owner-2': 0,
-      'owner-3': 0,
-    };
-    usages.forEach((u: any) => {
-      if (usageCounts[u.ownerId] !== undefined) {
-        usageCounts[u.ownerId] += u.unitsUsed;
-      }
+    const uData = owners.map((owner, idx) => {
+      const units = usages
+        .filter((u: any) => u.ownerId === owner.id)
+        .reduce((sum: number, u: any) => sum + (u.unitsUsed || 0), 0);
+      return {
+        name: `${owner.name} (Disewa)`,
+        value: units,
+        color: OWNER_COLORS[idx % OWNER_COLORS.length],
+      };
     });
-
-    const uData = [
-      { name: 'Surya (Disewa)', value: usageCounts['owner-1'] || 1, color: OWNER_COLORS['owner-1'] },
-      { name: 'Pemilik B (Disewa)', value: usageCounts['owner-2'] || 1, color: OWNER_COLORS['owner-2'] },
-      { name: 'Pemilik C (Disewa)', value: usageCounts['owner-3'] || 1, color: OWNER_COLORS['owner-3'] },
-    ];
 
     return { ownershipData: oData, utilizationData: uData };
-  }, [assets, usages]);
+  }, [owners, assets, usages]);
 
   // 4. Data Grafik 4: Komposisi Pengeluaran per Kategori & Tipe
   const expenseCompositionData = useMemo(() => {
@@ -246,13 +230,13 @@ export default function AnalyticsFinancePage() {
         </div>
 
         {/* Dual Export Buttons */}
-        <div className="flex items-center gap-2 self-start sm:self-auto">
+        <div className="flex flex-wrap items-center gap-2 w-full sm:w-auto">
           {/* 1. CSV for AI */}
           <button
             onClick={handleExportCsv}
             disabled={exportingType !== null}
             title="Download CSV terdenormalisasi yang ramah dipahami oleh AI/LLM (ChatGPT, Gemini, Claude)"
-            className="inline-flex items-center gap-1.5 px-3 py-2 rounded bg-white hover:bg-slate-50 border border-slate-300 text-slate-700 hover:text-slate-900 text-xs font-medium transition shadow-2xs"
+            className="inline-flex items-center justify-center flex-1 sm:flex-initial gap-1.5 px-3 py-2 rounded bg-white hover:bg-slate-50 border border-slate-300 text-slate-700 hover:text-slate-900 text-xs font-medium transition shadow-2xs"
           >
             <Bot className="w-3.5 h-3.5 text-blue-600" />
             <span>Download CSV (Untuk AI)</span>
@@ -263,7 +247,7 @@ export default function AnalyticsFinancePage() {
             onClick={handleExportExcel}
             disabled={exportingType !== null}
             title="Download Spreadsheet Excel (.xlsx) rapi dengan multi-sheet dan lebar kolom otomatis"
-            className="inline-flex items-center gap-1.5 px-3 py-2 rounded bg-emerald-700 hover:bg-emerald-800 text-white text-xs font-medium transition shadow-xs"
+            className="inline-flex items-center justify-center flex-1 sm:flex-initial gap-1.5 px-3 py-2 rounded bg-emerald-700 hover:bg-emerald-800 text-white text-xs font-medium transition shadow-xs"
           >
             <Download className="w-3.5 h-3.5" />
             <span>Download Excel (.xlsx)</span>
@@ -421,30 +405,38 @@ export default function AnalyticsFinancePage() {
               <span className="text-[11px] font-mono font-semibold text-slate-700 mb-1">
                 Total Stok Aset
               </span>
-              <div className="h-[210px] w-full">
-                <ResponsiveContainer width="100%" height="100%">
-                  <RePieChart>
-                    <Tooltip
-                      formatter={(val: any) => [`${val} Unit`, '']}
-                      contentStyle={{ backgroundColor: '#0f172a', borderColor: '#334155', borderRadius: '6px', color: '#fff', fontSize: '11px' }}
-                    />
-                    <Pie
-                      data={ownershipData}
-                      dataKey="value"
-                      nameKey="name"
-                      cx="50%"
-                      cy="50%"
-                      innerRadius={45}
-                      outerRadius={70}
-                      paddingAngle={3}
-                    >
-                      {ownershipData.map((entry, index) => (
-                        <Cell key={`cell-own-${index}`} fill={entry.color} />
-                      ))}
-                    </Pie>
-                  </RePieChart>
-                </ResponsiveContainer>
-              </div>
+              {assets.reduce((sum, a) => sum + (a.quantity || 0), 0) === 0 ? (
+                <div className="h-[210px] w-full flex flex-col items-center justify-center p-3 text-center">
+                  <Boxes className="w-8 h-8 text-slate-300 mb-2 stroke-[1.5]" />
+                  <span className="text-[11px] text-slate-500 font-medium">Stok Aset Kosong</span>
+                  <span className="text-[10px] text-slate-400 mt-0.5">Input di menu Inventaris Aset</span>
+                </div>
+              ) : (
+                <div className="h-[210px] w-full">
+                  <ResponsiveContainer width="100%" height="100%">
+                    <RePieChart>
+                      <Tooltip
+                        formatter={(val: any) => [`${val} Unit`, '']}
+                        contentStyle={{ backgroundColor: '#0f172a', borderColor: '#334155', borderRadius: '6px', color: '#fff', fontSize: '11px' }}
+                      />
+                      <Pie
+                        data={ownershipData}
+                        dataKey="value"
+                        nameKey="name"
+                        cx="50%"
+                        cy="50%"
+                        innerRadius={45}
+                        outerRadius={70}
+                        paddingAngle={3}
+                      >
+                        {ownershipData.map((entry, index) => (
+                          <Cell key={`cell-own-${index}`} fill={entry.color} />
+                        ))}
+                      </Pie>
+                    </RePieChart>
+                  </ResponsiveContainer>
+                </div>
+              )}
               <div className="text-[10px] text-slate-400 font-mono">
                 {assets.reduce((sum, a) => sum + a.quantity, 0)} Unit Total
               </div>
@@ -455,30 +447,38 @@ export default function AnalyticsFinancePage() {
               <span className="text-[11px] font-mono font-semibold text-slate-700 mb-1">
                 Unit Disewa (Order)
               </span>
-              <div className="h-[210px] w-full">
-                <ResponsiveContainer width="100%" height="100%">
-                  <RePieChart>
-                    <Tooltip
-                      formatter={(val: any) => [`${val} Unit`, '']}
-                      contentStyle={{ backgroundColor: '#0f172a', borderColor: '#334155', borderRadius: '6px', color: '#fff', fontSize: '11px' }}
-                    />
-                    <Pie
-                      data={utilizationData}
-                      dataKey="value"
-                      nameKey="name"
-                      cx="50%"
-                      cy="50%"
-                      innerRadius={45}
-                      outerRadius={70}
-                      paddingAngle={3}
-                    >
-                      {utilizationData.map((entry, index) => (
-                        <Cell key={`cell-util-${index}`} fill={entry.color} />
-                      ))}
-                    </Pie>
-                  </RePieChart>
-                </ResponsiveContainer>
-              </div>
+              {usages.reduce((sum: number, u: any) => sum + (u.unitsUsed || 0), 0) === 0 ? (
+                <div className="h-[210px] w-full flex flex-col items-center justify-center p-3 text-center">
+                  <Calendar className="w-8 h-8 text-slate-300 mb-2 stroke-[1.5]" />
+                  <span className="text-[11px] text-slate-500 font-medium">Belum Ada Transaksi</span>
+                  <span className="text-[10px] text-slate-400 mt-0.5">Input di menu Order</span>
+                </div>
+              ) : (
+                <div className="h-[210px] w-full">
+                  <ResponsiveContainer width="100%" height="100%">
+                    <RePieChart>
+                      <Tooltip
+                        formatter={(val: any) => [`${val} Unit`, '']}
+                        contentStyle={{ backgroundColor: '#0f172a', borderColor: '#334155', borderRadius: '6px', color: '#fff', fontSize: '11px' }}
+                      />
+                      <Pie
+                        data={utilizationData}
+                        dataKey="value"
+                        nameKey="name"
+                        cx="50%"
+                        cy="50%"
+                        innerRadius={45}
+                        outerRadius={70}
+                        paddingAngle={3}
+                      >
+                        {utilizationData.map((entry, index) => (
+                          <Cell key={`cell-util-${index}`} fill={entry.color} />
+                        ))}
+                      </Pie>
+                    </RePieChart>
+                  </ResponsiveContainer>
+                </div>
+              )}
               <div className="text-[10px] text-slate-400 font-mono">
                 {usages.reduce((sum: number, u: any) => sum + u.unitsUsed, 0)} Unit Tersewa
               </div>

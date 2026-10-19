@@ -156,8 +156,25 @@ export default function OrdersListPage() {
             <tbody>
               {filteredOrders.length === 0 ? (
                 <tr>
-                  <td colSpan={9} className="text-center py-8 text-slate-400 text-xs">
-                    Tidak ada order pada filter ini.
+                  <td colSpan={9} className="text-center py-12 text-slate-500">
+                    <div className="flex flex-col items-center justify-center max-w-sm mx-auto">
+                      <div className="w-12 h-12 rounded-full bg-slate-100 flex items-center justify-center text-slate-400 mb-3">
+                        <ShoppingCart className="w-6 h-6 stroke-[1.5]" />
+                      </div>
+                      <h4 className="font-semibold text-slate-800 text-sm mb-1">
+                        Belum Ada Order Sewa
+                      </h4>
+                      <p className="text-xs text-slate-500 mb-4 leading-relaxed">
+                        Belum ada transaksi penyewaan alat event yang tercatat. Klik tombol di bawah untuk membuat order penyewaan baru.
+                      </p>
+                      <Link
+                        href="/orders/new"
+                        className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded bg-slate-900 hover:bg-slate-800 text-white text-xs font-medium shadow-xs"
+                      >
+                        <Plus className="w-3.5 h-3.5" />
+                        <span>Buat Order Sewa Perdana</span>
+                      </Link>
+                    </div>
                   </td>
                 </tr>
               ) : (
@@ -248,7 +265,7 @@ export default function OrdersListPage() {
       {/* Modal Detail Order */}
       {selectedOrder && !showCancelModal && (
         <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-xs flex items-center justify-center z-50 p-4">
-          <div className="bg-white rounded-lg border border-slate-200 shadow-xl max-w-xl w-full p-6 max-h-[90vh] overflow-y-auto">
+          <div className="bg-white rounded-lg border border-slate-200 shadow-xl w-[calc(100vw-2rem)] sm:max-w-xl p-5 sm:p-6 max-h-[90vh] overflow-y-auto">
             <div className="flex items-center justify-between pb-3 border-b border-slate-200 mb-4">
               <div>
                 <span className="text-[10px] font-mono font-semibold uppercase tracking-wider text-slate-500">
@@ -360,7 +377,7 @@ export default function OrdersListPage() {
       {/* Modal Pembatalan / Koreksi Order */}
       {showCancelModal && selectedOrder && (
         <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-xs flex items-center justify-center z-50 p-4">
-          <div className="bg-white rounded-lg border border-slate-200 shadow-xl max-w-md w-full p-6">
+          <div className="bg-white rounded-lg border border-slate-200 shadow-xl w-[calc(100vw-2rem)] sm:max-w-md p-5 sm:p-6 max-h-[90vh] overflow-y-auto">
             <div className="flex items-center gap-2 text-rose-600 mb-2">
               <AlertTriangle className="w-5 h-5 shrink-0" />
               <h3 className="font-bold text-sm text-slate-900 font-sans">

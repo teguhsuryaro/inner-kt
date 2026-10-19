@@ -47,12 +47,8 @@ export default function NewOrderPage() {
   const [transportCost, setTransportCost] = useState<number>(12000);
   const [notes, setNotes] = useState('');
 
-  // Units chosen per owner
-  const [ownerUnits, setOwnerUnits] = useState<Record<string, number>>({
-    'owner-1': 10,
-    'owner-2': 6,
-    'owner-3': 4,
-  });
+  // Units chosen per owner (Starts at 0 for clean production input)
+  const [ownerUnits, setOwnerUnits] = useState<Record<string, number>>({});
 
   // Gross revenue override
   const [customGross, setCustomGross] = useState<number | null>(null);
@@ -334,6 +330,18 @@ export default function NewOrderPage() {
                 Total Dipilih: <strong className="text-slate-900">{totalUnits} Unit</strong>
               </span>
             </div>
+
+            {assets.length === 0 && (
+              <div className="p-3 bg-amber-50 border border-amber-200 rounded text-xs text-amber-800 flex items-center justify-between gap-2">
+                <span>Inventaris aset masih kosong. Tambahkan aset terlebih dahulu di menu Inventaris Aset agar dapat memilih unit yang disewakan.</span>
+                <Link
+                  href="/assets"
+                  className="px-2.5 py-1 bg-amber-700 text-white rounded text-[11px] font-medium hover:bg-amber-800 shrink-0"
+                >
+                  + Tambah Aset
+                </Link>
+              </div>
+            )}
 
             <div className="space-y-2.5">
               {owners.map((owner) => {
